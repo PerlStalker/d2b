@@ -7,6 +7,7 @@ import (
 	//"os"
 	//"fmt"
 	"bytes"
+	"strings"
 )
 
 func Format_html (headings []string, bmap map[string][]bookmarks.Bookmark, body_only bool) (html string)  {
@@ -42,15 +43,16 @@ func Format_html (headings []string, bmap map[string][]bookmarks.Bookmark, body_
 		}
 		// print heading
 		log.Printf("Doing heading: %s\n", headings[i]);
+
+		// title case the first character of the heading
+		first := headings[i][0:1];
+		rest  := headings[i][1:len(headings[i])];
+
 		//templ_heading.Execute(os.Stdout, headings[i]);
-		templ_heading.Execute(&buffer, headings[i]);
+		templ_heading.Execute(&buffer, strings.ToTitle(first)+rest);
 		// start bookmark wrapper
 		//templ_bookmark_list.Execute(os.Stdout, bmap[headings[i]]);
 		templ_bookmark_list.Execute(&buffer, bmap[headings[i]]);
-		//for j := 0; i < len(bmap[headings[i]]); j++ {
-			// print bookmark
-		//}
-		// stop bookmark wrapper
 	}
 	if ! body_only {
 		//templ_footer.Execute(os.Stdout, nil);
