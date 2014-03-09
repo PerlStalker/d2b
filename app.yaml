@@ -1,0 +1,19 @@
+application: d2b
+version: 1
+runtime: go
+api_version: go1
+
+admin_console:
+  pages:
+  - name: Foo Configuration
+    url: /admin/config
+
+handlers:
+- url: /admin/config
+  script: _go_app
+  login: admin
+- url: /admin/
+  script: _go_app
+- url: /.*
+  script: _go_app
+

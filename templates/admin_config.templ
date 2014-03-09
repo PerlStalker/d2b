@@ -1,0 +1,19 @@
+<html>
+ <head><title>Configuration Options</title></head>
+ <body>
+   <!-- current options -->
+   <table>
+     {{range . }}
+     <tr><th>{{.Key}}</th><td>{{.Value}}</td></tr>
+     {{end}}
+   </table>
+   <!-- add new option -->
+   <form name="config" action="/admin/config" method="Post">
+     <table>
+       <tr><th>Key</th><td><input type="text" name="key" value="" /></td></tr>
+       <tr><th>Value</th><td><input type="text" name="value" value="" /></td></tr>
+     </table>
+     <input type="Submit" value="Set key" name="submit"/>
+   </form>
+ </body>
+</html>
