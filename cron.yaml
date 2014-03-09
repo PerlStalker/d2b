@@ -1,0 +1,9 @@
+cron:
+- description: fetch bookmarks
+  url: /cron/fetch
+  schedule: every 4 hours
+  timezone: America/Denver
+- description: publish blog
+  url: /cron/publish
+  schedule: every day 05:00
+  timezone: America/Denver
