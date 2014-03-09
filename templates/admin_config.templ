@@ -4,7 +4,10 @@
    <!-- current options -->
    <table>
      {{range . }}
-     <tr><th>{{.Key}}</th><td>{{.Value}}</td></tr>
+     <tr>
+       <th>{{.Key}}</th><td>{{.Value}}</td>
+       <td><a href="/admin/config?delete={{.Key}}">delete</a></td>
+     </tr>
      {{end}}
    </table>
    <!-- add new option -->

@@ -11,6 +11,7 @@ import (
  *  lastCheck Time (as string)
  *  bookmarkUrl string
  *  bookmarkService string (default to delicious)
+ *  headings string (comma delimited)
  */
 type KVPair struct {
 	Key string;
@@ -54,7 +55,7 @@ func SetConfigOption (c appengine.Context, key string, value string) {
 			break // the result was not found
 		}
 		if err != nil {
-			log.Fatal("error fetching values: %v", err)
+			log.Fatal("error fetching values: ", err)
 			break
 		}
 		db_entry = db_key
@@ -79,4 +80,27 @@ func GetAllConfigOptions (c appengine.Context) (options []KVPair) {
 	}
 
 	return options
+}
+
+func DeleteConfigOption (c appengine.Context, key string) {
+	q := datastore.NewQuery("KVPair").
+		Filter("Key = ", key);
+	results := q.Run(c)
+
+	var kv KVPair
+	for {
+		db_key, err := results.Next(&kv);
+		if err == datastore.Done {
+			break // the result was not found
+		}
+		if err != nil {
+			log.Fatal("error fetching values: ", err)
+			break
+		}
+		// the option was found, delete it.
+		err = datastore.Delete(c, db_key);
+		if err != nil {
+			log.Fatal("error deleting key: ", err)
+		}
+	}
 }

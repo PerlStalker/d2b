@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"log"
 	"io/ioutil"
-	"net/http"
+	//"net/http"
 	"time"
 	"code.google.com/p/d2b/bookmarks"
 	//"fmt"
+	"appengine"
+	"appengine/urlfetch"
 )
 
 
@@ -20,8 +22,10 @@ type DeliciousBookmark struct {
 	dt string
 }
 
-func Parse (url string) (marks []bookmarks.Bookmark) {
-	resp, err := http.Get(url);
+func Parse (c appengine.Context, url string) (marks []bookmarks.Bookmark) {
+	//resp, err := http.Get(url); // net/http
+	client := urlfetch.Client(c);
+	resp, err := client.Get(url);
 
 	if err != nil {
 		log.Fatal(err);
@@ -55,6 +59,8 @@ func Parse (url string) (marks []bookmarks.Bookmark) {
 		bm.Time, err = time.Parse(time.RFC3339, bookmark_map["dt"].(string));
 		bm.Url = bookmark_map["u"].(string);
 		bm.Note = bookmark_map["n"].(string);
+
+		bm.Author = bookmark_map["a"].(string);
 
 		tags_map := bookmark_map["t"].([]interface{});
 		bm.Tags = make([]string, len(tags_map));

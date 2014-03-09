@@ -50,7 +50,8 @@ func DeleteOldBookmarks (c appengine.Context) {
 
 func GetBookmarks (c appengine.Context, from_time time.Time) (bmarks []bookmarks.Bookmark) {
 	q := datastore.NewQuery("Bookmark").
-		Filter("Time < ", from_time);
+		Filter("Time < ", from_time).
+		Order("Time");
 
 	_, err := q.GetAll(c, &bmarks);
 
@@ -62,7 +63,8 @@ func GetBookmarks (c appengine.Context, from_time time.Time) (bmarks []bookmarks
 }
 
 func GetAllBookmarks (c appengine.Context) (bmarks []bookmarks.Bookmark) {
-	q := datastore.NewQuery("Bookmark");
+	q := datastore.NewQuery("Bookmark").
+		Order("Time");
 
 	_, err := q.GetAll(c, &bmarks);
 
