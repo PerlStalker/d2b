@@ -11,6 +11,7 @@ import (
 	"html/template"
 	"appengine"
 	"strings"
+	"strconv"
 	"time"
 )
 
@@ -68,7 +69,7 @@ func handle_cron_fetch (w http.ResponseWriter, r *http.Request) {
 	if bookmark_service == "delicious" {
 		bmarks = delicious.Parse(c, url);
 	}
-	data.SetConfigOption(c, "lastFetch", time.Now().String())
+	data.SetConfigOption(c, "lastFetch", time.Now().Format(time.RFC3339))
 	data.AddBookmarks(c, bmarks);
 }
 
@@ -78,11 +79,30 @@ func handle_cron_publish (w http.ResponseWriter, r *http.Request) {
 	headings := strings.Split(data.GetConfigOption(c, "headings"), ",")
 
 	// get last publish date
-	var last_published time.Time;
+	last_published_st := data.GetConfigOption(c, "lastPublished")
+	last_published, parse_err := time.Parse(time.RFC3339, last_published_st);
+	if parse_err != nil {
+		last_published = time.Now().AddDate(0, 0, -1); // yesterday is -1
+	}
 
 	bmarks := data.GetBookmarks(c, last_published);
+	//log.Printf("Bookmarks: %+v", bmarks);
 
-	bookmark_map := build_map(headings, "Everything else", bmarks);
+	//minLinks, err := strconv.ParseInt(data.GetConfigOption(c, "minLinks"), 10, 0)
+	minLinks, err := strconv.Atoi(data.GetConfigOption(c, "minLinks"))
+	if err != nil {
+		minLinks = 5
+	}
+
+	log.Printf("Found %d bookmarks since %v", len(bmarks), last_published);
+
+	if int64(len(bmarks)) < int64(minLinks) {
+		log.Printf("Not enough bookmarks. %d", len(bmarks));
+		return
+	}
+
+	bookmark_map := build_map(headings,
+		data.GetConfigOption(c, "defaultHeading"), bmarks);
 
 	// instead of printing, this will send somewhere based on the
 	// configured blogging engine

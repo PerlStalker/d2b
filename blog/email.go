@@ -38,5 +38,5 @@ func PublishEmail (c appengine.Context, message string) {
 		log.Fatal("Error publishing to email: ", err);
 	}
 
-	data.SetConfigOption(c, "lastPublish", time.Now().String());
+	data.SetConfigOption(c, "lastPublished", time.Now().Format(time.RFC3339));
 }
