@@ -75,7 +75,7 @@ func handle_cron_fetch (w http.ResponseWriter, r *http.Request) {
 func handle_cron_publish (w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r);
 
-	headings := strings.Split(data.GetConfigOption(c, "headints"), ",")
+	headings := strings.Split(data.GetConfigOption(c, "headings"), ",")
 
 	// get last publish date
 	var last_published time.Time;
@@ -86,8 +86,15 @@ func handle_cron_publish (w http.ResponseWriter, r *http.Request) {
 
 	// instead of printing, this will send somewhere based on the
 	// configured blogging engine
-	var html = blog.Format_html(headings, bookmark_map, false);
-	fmt.Fprint(w, html)
+	blogService := data.GetConfigOption(c, "blogService");
+	if blogService == "" {
+		// noop
+	} else if blogService == "email" {
+		html := blog.Format_html(headings, bookmark_map, true)
+		blog.PublishEmail(c, html)
+	}
+	//var html = blog.Format_html(headings, bookmark_map, false);
+	//fmt.Fprint(w, html)
 
 }
 

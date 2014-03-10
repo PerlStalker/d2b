@@ -12,10 +12,10 @@ import (
 
 func Format_html (headings []string, bmap map[string][]bookmarks.Bookmark, body_only bool) (html string)  {
 	const text_head = `<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head><body>`;
-	templ_head := template.Must(template.New("heading").Parse(text_head));
+	templ_head := template.Must(template.New("head").Parse(text_head));
 
 	const text_footer = `</body>`;
-	templ_footer := template.Must(template.New("heading").Parse(text_footer));
+	templ_footer := template.Must(template.New("footer").Parse(text_footer));
 
 
 	const text_heading = `<h2>{{.}}</h2>`;
